@@ -23,85 +23,78 @@ For each game, find the minimum set of cubes that must have been present. What i
 
 
 import os
+
 from enum import IntEnum, Enum
 
-class eCubes(IntEnum):
-	RED_CUBES = 12
-	GREEN_CUBES = 13
-	BLUE_CUBES = 14
+class eTUPLE_IDX(IntEnum):
+	RED_CUBES = 0
+	GREEN_CUBES = 1
+	BLUE_CUBES = 2
+
 
 def document_parser(document):
 	total = 0
 	file = open(document, 'r')
 	for line in file.readlines(): # O(x) where x is the number of lines		# line_sum = find_line_value(line)
-		result = isValidGame(line)
-		game_id = extract_game_id(line)
-		print(line.rstrip())
-		print(f"Game {game_id} {"valid" if result else "invalid"} \n")
-		if result:
-			total += game_id
+		print(f"{line.rstrip()}")
+		result = decomposeGame(line.rstrip())
+		answer = result[eTUPLE_IDX.RED_CUBES] * result[eTUPLE_IDX.GREEN_CUBES] * result[eTUPLE_IDX.BLUE_CUBES]
+		print(f"Result {result} and {answer}\n" )
+		total += answer
+
+		
 
 	return total
 
-def isValidGame(game):
+def decomposeGame(game):
+	max_red = 0
+	max_blue = 0
+	max_green = 0
+
 	game = game.split(':')
 	game = game[1].split(';')
-	#print(game)
 	for draw in game:
-		if not isValidDraw(draw):
-			return False
-	return True
+		result = decomposeDraw(draw)
+		max_red = max(result[eTUPLE_IDX.RED_CUBES],max_red)
+		max_blue = max(result[eTUPLE_IDX.BLUE_CUBES], max_blue)
+		max_green = max(result[eTUPLE_IDX.GREEN_CUBES], max_green)
+
+	return ((max_red,max_blue,max_green))
+
 		
 
-def isValidDraw(draw):
+def decomposeDraw(draw):
+	red = 0
+	blue = 0
+	green = 0
 	draw = draw.split(',')
-	#print(draw)
 	for cube in draw:
-		if not isValidCube(cube):
-			return False
-	return True
+		result = decomposeCube(cube)
+		
+		if result[0] == 'red':
+			red = result[1]
+		if result[0] == 'blue':
+			blue = result[1]
+		if result[0] == 'green':
+			green = result[1]
+
+	return ((red,blue,green))
 		
 
-def isValidCube(cube):
+def decomposeCube(cube):
 	cube = cube.strip()
 	cube = cube.split(' ')
-	#print(cube)
 	value = int(cube[0])
 	color = cube[1].lower()
 
-	if color == 'red' and value > eCubes.RED_CUBES:
-		print(f"Color: {color} value: {value} is > {eCubes.RED_CUBES}" )
-		return False
-	elif color =='blue' and value > eCubes.BLUE_CUBES:
-		print(f"Color: {color} value: {value} is > {eCubes.RED_CUBES}" ) 
-		return False
-	elif color == 'green' and value > eCubes.GREEN_CUBES:
-		print(f"Color: {color} value: {value} is > {eCubes.RED_CUBES}" )
-		return False
-	return True
+	return((color,value))
 
-
-def extract_game_id(line):
-	line = line.split(":")[0]
-	p1 = 0
-	while not line[p1].isdigit():
-		p1 += 1
-
-	p2 = p1
-	while p2 < len(line):
-		if line[p2].isdigit():
-			p2 += 1
-
-	if p1 == p2:
-		return int(line[p1])
-	else:
-		return int(line[p1:p2])
 
 
 def main():
 	# Path of input text file
 	data_file_path = os.path.join(os.path.dirname(__file__), 'input.txt')
 	# Start of processing call
-	print(f'Sum of all valid game id values: {document_parser(data_file_path)}')
+	print(f'Sum of all power: {document_parser(data_file_path)}')
 
 main()
