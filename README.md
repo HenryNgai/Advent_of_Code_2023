@@ -16,7 +16,7 @@ Timed speed coding challenge with friends. This does not take into account optim
     Day 2 Problem 1 :heavy_check_mark: Total time: 31 minutes
   </li>
   <li>
-    Day 2 Problem 2
+    Day 2 Problem 2 :heavy_check_mark: Total time: 20 minutes
   </li>
     <li>
     Day 3 Problem 1
